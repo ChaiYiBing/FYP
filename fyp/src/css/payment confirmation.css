@@ -1,0 +1,76 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  h2, h5, h4 {
+    color: #333;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  h5 {
+    margin-top: 30px;
+    font-size: 1.3rem;
+  }
+  
+  .list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .list-group-item h6 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .list-group-item small {
+    font-size: 0.9rem;
+    color: #888;
+  }
+  
+  .total-price {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #007bff;
+    text-align: right;
+    margin-top: 20px;
+  }
+  
+  .form-check-label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+    margin-left: 8px;
+  }
+  
+  .payment-methods {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+  }
+  
+  .btn-confirm {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-confirm:hover {
+    background-color: #218838;
+  }
+  
