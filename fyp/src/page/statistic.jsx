@@ -15,14 +15,6 @@ function StatisticsPage({ isAdmin }) {
     ["V-Neck Tee", 30],
   ];
 
-  const pieChartData = [
-    ["Category", "Percentage"],
-    ["Shirts", 40],
-    ["Pants", 30],
-    ["Accessories", 20],
-    ["Shoes", 10],
-  ];
-
   const lineChartData = [
     ["Month", "Sales"],
     ["January", 100],
@@ -51,7 +43,7 @@ function StatisticsPage({ isAdmin }) {
       <h2 className="text-center mb-4">Statistics</h2>
       
       <div className="row mb-5">
-        <div className="col-md-6">
+        <div className="col-md-12">
           <h5 className="text-center">Sales by Product</h5>
           <Chart
             chartType="Bar"
@@ -61,21 +53,6 @@ function StatisticsPage({ isAdmin }) {
             options={{
               ...chartOptions,
               title: "Sales by Product",
-            }}
-          />
-        </div>
-        
-        <div className="col-md-6">
-          <h5 className="text-center">Sales by Category</h5>
-          <Chart
-            chartType="PieChart"
-            width="100%"
-            height="400px"
-            data={pieChartData}
-            options={{
-              ...chartOptions,
-              title: "Sales by Category",
-              pieHole: 0.4,
             }}
           />
         </div>

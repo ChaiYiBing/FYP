@@ -1,46 +1,56 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function LoginPage() {
   const [activeTab, setActiveTab] = useState("login");
   const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
   const [registerInfo, setRegisterInfo] = useState({ email: "", password: "" });
-  const [forgotEmail, setForgotEmail] = useState("");
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Implement login functionality here (e.g., validate loginInfo)
-    console.log("Logging in:", loginInfo);
-    
-    // If login is successful, navigate to the homepage
-    navigate("/home");
+    try {
+      console.log("Requesting:", `${process.env.REACT_APP_API_URL}/login`);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, loginInfo);
+      if (response && response.data) {
+        console.log("Login successful:", response.data);
+        navigate("/home");
+      } else {
+        console.error("Unexpected response structure:", response);
+        alert("Login failed: Unexpected response from server.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("An error occurred during login. Please try again.");
+    }
   };
+  
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    // Implement register functionality here
-    console.log("Registering:", registerInfo);
-  };
-
-  const handleForgotPassword = (e) => {
-    e.preventDefault();
-    // Implement forgot password functionality here
-    console.log("Resetting password for:", forgotEmail);
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/register", registerInfo);
+      console.log("Registration successful:", response.data);
+      alert("Registration successful. You can now log in.");
+      setActiveTab("login"); // Switch to login tab
+    } catch (error) {
+      console.error("Registration failed:", error.response ? error.response.data : error);
+      alert("Registration failed: " + (error.response ? error.response.data.message : error.message));
+    }
   };
 
   return (
     <div className="container d-flex justify-content-center mt-5">
       <div className="card p-4" style={{ width: "400px" }}>
         <div className="text-center mb-3">
-          <h2>{activeTab === "login" ? "Login" : activeTab === "register" ? "Register" : "Forgot Password"}</h2>
+          <h2>{activeTab === "login" ? "Login" : "Register"}</h2>
         </div>
-
         <div className="btn-group w-100 mb-4">
           <button
             className={`btn ${activeTab === "login" ? "btn-primary" : "btn-outline-primary"}`}
@@ -53,12 +63,6 @@ function LoginPage() {
             onClick={() => handleTabChange("register")}
           >
             Sign Up
-          </button>
-          <button
-            className={`btn ${activeTab === "forgot" ? "btn-primary" : "btn-outline-primary"}`}
-            onClick={() => handleTabChange("forgot")}
-          >
-            Forgot Password
           </button>
         </div>
 
@@ -115,23 +119,6 @@ function LoginPage() {
               />
             </div>
             <button type="submit" className="btn btn-primary w-100">Sign Up</button>
-          </form>
-        )}
-
-        {activeTab === "forgot" && (
-          <form onSubmit={handleForgotPassword}>
-            <div className="mb-3">
-              <label htmlFor="forgotEmail" className="form-label">Enter your email</label>
-              <input
-                type="email"
-                className="form-control"
-                id="forgotEmail"
-                value={forgotEmail}
-                onChange={(e) => setForgotEmail(e.target.value)}
-                required
-              />
-            </div>
-            <button type="submit" className="btn btn-primary w-100">Reset Password</button>
           </form>
         )}
       </div>

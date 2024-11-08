@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useCart } from "./CartContext";
 import { useNavigate, Link } from "react-router-dom";
-import { FaShoppingCart, FaTrash, FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaShoppingCart, FaTrash, FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
 
 const products = [
     { id: 1, name: "Graphic Tee", type: "Shirt", price: "21.95 €", image: "https://via.placeholder.com/150", month: "January", rating: 4 },
@@ -20,6 +20,7 @@ const products = [
 function HomePage() {
   const [favorites, setFavorites] = useState([]);
   const [filterMonth, setFilterMonth] = useState("All");
+  const [filterType, setFilterType] = useState("All"); // New filter for product type
   const { cartItems, addToCart, removeFromCart } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ function HomePage() {
   };
 
   const handleMonthChange = (e) => setFilterMonth(e.target.value);
+  const handleTypeChange = (e) => setFilterType(e.target.value); // Handler for type filter
   const toggleCartDropdown = () => setIsCartOpen((prev) => !prev);
 
   const handlePayment = () => {
@@ -43,15 +45,11 @@ function HomePage() {
     navigate("/payment");
   };
 
-  const filteredProducts =
-    filterMonth === "All"
-      ? products
-      : products.filter((product) => product.month === filterMonth);
-
-  const bestSellers = [
-    { id: 1, name: "Graphic Tee", price: "21.95 €" },
-    { id: 2, name: "Jeans", price: "29.95 €" },
-  ];
+  // Filtering products by month and type
+  const filteredProducts = products.filter((product) => 
+    (filterMonth === "All" || product.month === filterMonth) &&
+    (filterType === "All" || product.type === filterType)
+  );
 
   return (
     <div className="container">
@@ -99,15 +97,12 @@ function HomePage() {
         {/* Sidebar */}
         <aside className="col-md-3">
           <div className="bg-light p-3 rounded mb-4">
-            <h5>Best Sellers</h5>
-            <ul className="list-group list-group-flush">
-              {bestSellers.map((item) => (
-                <li key={item.id} className="list-group-item">
-                  <strong>{item.name}</strong>
-                  <span className="float-end">{item.price}</span>
-                </li>
-              ))}
-            </ul>
+            <h5>Filter by Type</h5>
+            <select className="form-select" value={filterType} onChange={handleTypeChange}>
+              <option value="All">All Types</option>
+              <option value="Shirt">Shirts</option>
+              <option value="Pants">Pants</option>
+            </select>
           </div>
           <button className="btn btn-info w-100 mt-4" onClick={() => navigate("/statistics")}>
             View Statistics
@@ -141,6 +136,14 @@ function HomePage() {
                       </Link>
                     </h5>
                     <p className="card-text">{product.price}</p>
+
+                    {/* Product Rating */}
+                    <div className="mb-2">
+                      {[...Array(5)].map((_, index) => (
+                        <FaStar key={index} color={index < product.rating ? "#ffc107" : "#e4e5e9"} />
+                      ))}
+                    </div>
+
                     <button className="btn btn-primary mt-2" onClick={() => addToCart(product)}>
                       Add to Cart
                     </button>
