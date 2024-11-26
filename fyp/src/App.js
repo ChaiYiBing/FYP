@@ -6,6 +6,7 @@ import CartPage from "./page/cart";
 import PaymentConfirmationPage from "./page/paymentconfirmation";
 import StatisticsPage from "./page/statistic";
 import ProductDetailPage from "./page/productdetail"; // Import the ProductDetailPage component
+import ProfilePage from "./page/profilepage"; // Import the ProfilePage component
 import { CartProvider } from "./page/CartContext";
 
 function App() {
@@ -18,7 +19,8 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/payment" element={<PaymentConfirmationPage />} />
           <Route path="/statistics" element={<StatisticsPage isAdmin={true} />} />
-          <Route path="/product/:productId" element={<ProductDetailPage />} /> {/* Product Detail route */}
+          <Route path="/product/:productId" element={<ProductDetailPage />} />
+          <Route path="/profile" element={<ProfilePage />} /> {/* Profile Page route */}
         </Routes>
       </Router>
     </CartProvider>

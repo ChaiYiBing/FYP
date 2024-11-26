@@ -1,28 +1,63 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function StatisticsPage({ isAdmin }) {
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
+  const [barChartData, setBarChartData] = useState([["Product", "Sales"]]);
+  const [lineChartData, setLineChartData] = useState([["Month", "Sales"]]);
 
-  // Data for the charts (Replace with real data as needed)
-  const barChartData = [
-    ["Product", "Sales"],
-    ["Graphic Tee", 100],
-    ["Hoodie", 80],
-    ["Basic Tee", 60],
-    ["Long Sleeve Tee", 40],
-    ["V-Neck Tee", 30],
-  ];
+  // Fetch sales data from the backend
+  useEffect(() => {
+    const fetchSalesData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/sales");
+        const salesData = response.data;
 
-  const lineChartData = [
-    ["Month", "Sales"],
-    ["January", 100],
-    ["February", 120],
-    ["March", 130],
-    ["April", 140],
-    ["May", 150],
-  ];
+        // Prepare data for Bar Chart
+        const barData = [["Product", "Sales"]];
+        const lineData = [["Month", "Sales"]];
+
+        const productSales = {};
+        const monthlySales = {};
+
+        salesData.forEach((sale) => {
+          // Prepare bar chart data
+          if (productSales[sale.product_name]) {
+            productSales[sale.product_name] += sale.total_sales;
+          } else {
+            productSales[sale.product_name] = sale.total_sales;
+          }
+
+          // Prepare line chart data (monthly)
+          if (monthlySales[sale.month]) {
+            monthlySales[sale.month] += sale.total_sales;
+          } else {
+            monthlySales[sale.month] = sale.total_sales;
+          }
+        });
+
+        // Convert product sales to barData
+        for (const [product, total] of Object.entries(productSales)) {
+          barData.push([product, total]);
+        }
+
+        // Convert monthly sales to lineData
+        for (const [month, total] of Object.entries(monthlySales)) {
+          lineData.push([month, total]);
+        }
+
+        setBarChartData(barData);
+        setLineChartData(lineData);
+      } catch (error) {
+        console.error("Error fetching sales data:", error);
+        alert("Failed to load sales data.");
+      }
+    };
+
+    fetchSalesData();
+  }, []);
 
   // Chart options
   const chartOptions = {

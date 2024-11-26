@@ -6,7 +6,7 @@ import axios from "axios";
 function LoginPage() {
   const [activeTab, setActiveTab] = useState("login");
   const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
-  const [registerInfo, setRegisterInfo] = useState({ email: "", password: "" });
+  const [registerInfo, setRegisterInfo] = useState({ email: "", password: "", username: "" });
   const navigate = useNavigate();
 
   const handleTabChange = (tab) => {
@@ -16,18 +16,19 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      console.log("Requesting:", `${process.env.REACT_APP_API_URL}/login`);
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, loginInfo);
-      if (response && response.data) {
-        console.log("Login successful:", response.data);
-        navigate("/home");
-      } else {
-        console.error("Unexpected response structure:", response);
-        alert("Login failed: Unexpected response from server.");
+      const response = await axios.post("http://localhost:5000/api/auth/login", loginInfo, {
+        withCredentials: true,
+      });
+  
+      if (response.data) {
+        const userId = response.data.user.id; // Assuming `id` is returned in the user object
+        localStorage.setItem("userId", userId); // Store userId in localStorage
+        alert("Login successful!");
+        navigate("/home"); // Navigate to homepage
       }
     } catch (error) {
-      console.error("Error during login:", error);
-      alert("An error occurred during login. Please try again.");
+      console.error("Login error:", error.response ? error.response.data : error);
+      alert("Login failed: " + (error.response ? error.response.data.message : error.message));
     }
   };
   
@@ -35,12 +36,17 @@ function LoginPage() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/register", registerInfo);
-      console.log("Registration successful:", response.data);
-      alert("Registration successful. You can now log in.");
+      const trimmedRegisterInfo = {
+        email: registerInfo.email.trim(),
+        password: registerInfo.password.trim(),
+        username: registerInfo.username.trim(),
+      };
+
+      const response = await axios.post("http://localhost:5000/api/auth/register", trimmedRegisterInfo);
+      alert(response.data.message); // Notify success
       setActiveTab("login"); // Switch to login tab
     } catch (error) {
-      console.error("Registration failed:", error.response ? error.response.data : error);
+      console.error("Registration error:", error.response ? error.response.data : error);
       alert("Registration failed: " + (error.response ? error.response.data.message : error.message));
     }
   };
@@ -96,6 +102,17 @@ function LoginPage() {
 
         {activeTab === "register" && (
           <form onSubmit={handleRegister}>
+            <div className="mb-3">
+              <label htmlFor="registerUsername" className="form-label">Username</label>
+              <input
+                type="text"
+                className="form-control"
+                id="registerUsername"
+                value={registerInfo.username}
+                onChange={(e) => setRegisterInfo({ ...registerInfo, username: e.target.value })}
+                required
+              />
+            </div>
             <div className="mb-3">
               <label htmlFor="registerEmail" className="form-label">Email address</label>
               <input
